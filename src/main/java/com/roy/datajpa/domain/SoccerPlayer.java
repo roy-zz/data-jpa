@@ -1,5 +1,6 @@
 package com.roy.datajpa.domain;
 
+import com.fasterxml.jackson.annotation.JsonIgnore;
 import lombok.*;
 
 import javax.persistence.*;
@@ -12,10 +13,10 @@ import static lombok.AccessLevel.*;
 @Getter @Setter
 @ToString(of = {"id", "name", "age"})
 @NoArgsConstructor(access = PROTECTED)
-public class Member {
+public class SoccerPlayer {
 
     @Id @GeneratedValue
-    @Column(name = "member_id")
+    @Column(name = "soccer_player_id")
     private Long id;
     private String name;
     private int age;
@@ -24,15 +25,15 @@ public class Member {
     @JoinColumn(name = "team_id")
     private Team team;
 
-    public Member(String name) {
+    public SoccerPlayer(String name) {
         this(name, 0);
     }
 
-    public Member(String name, int age) {
+    public SoccerPlayer(String name, int age) {
         this(name, age, null);
     }
 
-    public Member(String name, int age, Team team) {
+    public SoccerPlayer(String name, int age, Team team) {
         this.name = name;
         this.age = age;
         if (Objects.nonNull(team)) {
@@ -42,7 +43,7 @@ public class Member {
 
     public void changeTeam(Team team) {
         this.team = team;
-        team.getMembers().add(this);
+        team.getSoccerPlayers().add(this);
     }
 
 }
