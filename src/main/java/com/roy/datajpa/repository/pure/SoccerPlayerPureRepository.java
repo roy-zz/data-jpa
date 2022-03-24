@@ -5,6 +5,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -16,6 +17,12 @@ public class SoccerPlayerPureRepository {
     public SoccerPlayer save(SoccerPlayer soccerPlayer) {
         entityManager.persist(soccerPlayer);
         return soccerPlayer;
+    }
+
+    public List<SoccerPlayer> saveAll(List<SoccerPlayer> soccerPlayers) {
+        List<SoccerPlayer> answer = new ArrayList<>();
+        soccerPlayers.forEach(soccerPlayer -> answer.add(save(soccerPlayer)));
+        return answer;
     }
 
     public void delete(SoccerPlayer soccerPlayer) {

@@ -6,6 +6,7 @@ import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
 import javax.persistence.PersistenceContext;
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -17,6 +18,12 @@ public class TeamPureRepository {
     public Team save(Team team) {
         entityManager.persist(team);
         return team;
+    }
+
+    public List<Team> saveAll(List<Team> teams) {
+        List<Team> answer = new ArrayList<>();
+        teams.forEach(team -> answer.add(save(team)));
+        return answer;
     }
 
     public void remove(Team team) {
