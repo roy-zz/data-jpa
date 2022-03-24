@@ -29,7 +29,7 @@ public class SoccerPlayerPureRepository {
     }
 
     public Optional<SoccerPlayer> findOptionalById(Long id) {
-        return Optional.of(entityManager.find(SoccerPlayer.class, id));
+        return Optional.ofNullable(findEntityById(id));
     }
 
     public SoccerPlayer findEntityById(Long id) {
