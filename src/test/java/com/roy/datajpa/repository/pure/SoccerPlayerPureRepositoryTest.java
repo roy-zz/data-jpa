@@ -73,4 +73,35 @@ class SoccerPlayerPureRepositoryTest {
         assertEquals(183, result.get(0).getHeight());;
     }
 
+    @Test
+    @DisplayName("네임드 쿼리 테스트(이름 조회)")
+    void namedQueryByNameTest() {
+        List<SoccerPlayer> players = List.of(
+                new SoccerPlayer("Roy"),
+                new SoccerPlayer("Perry")
+        );
+        pureRepository.saveAll(players);
+
+        List<SoccerPlayer> result =
+                pureRepository.findByNameUsingNamedQuery("Roy");
+        assertEquals(1, result.size());
+        assertEquals("Roy", result.get(0).getName());
+    }
+
+    @Test
+    @DisplayName("네임드 쿼리 테스트(키 조회)")
+    void namedQueryByHeightTest() {
+        List<SoccerPlayer> players = List.of(
+                new SoccerPlayer("Roy", 173),
+                new SoccerPlayer("Perry", 183)
+        );
+        pureRepository.saveAll(players);
+
+        List<SoccerPlayer> result =
+                pureRepository.findByHeightGreaterThanUsingNamedQuery(180);
+        assertEquals(1, result.size());
+        assertEquals("Perry", result.get(0).getName());
+        assertEquals(183, result.get(0).getHeight());
+    }
+
 }

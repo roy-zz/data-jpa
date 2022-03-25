@@ -64,4 +64,16 @@ public class SoccerPlayerPureRepository {
                 .getResultList();
     }
 
+    public List<SoccerPlayer> findByNameUsingNamedQuery(String name) {
+        return entityManager.createNamedQuery("SoccerPlayer.findByName", SoccerPlayer.class)
+                .setParameter("name", name)
+                .getResultList();
+    }
+
+    public List<SoccerPlayer> findByHeightGreaterThanUsingNamedQuery(int height) {
+        return entityManager.createNamedQuery("SoccerPlayer.findByHeightGreaterThan", SoccerPlayer.class)
+                .setParameter("height", height)
+                .getResultList();
+    }
+
 }

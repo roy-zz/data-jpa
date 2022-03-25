@@ -11,6 +11,14 @@ import java.util.Objects;
 import static lombok.AccessLevel.PROTECTED;
 
 @Entity
+@NamedQueries(value = {
+        @NamedQuery(
+                name = "SoccerPlayer.findByName",
+                query = "SELECT SP FROM SoccerPlayer SP WHERE SP.name = :name"),
+        @NamedQuery(
+                name = "SoccerPlayer.findByHeightGreaterThan",
+                query = "SELECT SP FROM SoccerPlayer SP WHERE SP.height > :height")
+})
 @Getter @Setter
 @ToString(of = {"id", "name", "height", "weight"})
 @NoArgsConstructor(access = PROTECTED)
