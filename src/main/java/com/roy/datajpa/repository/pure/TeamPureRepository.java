@@ -1,6 +1,5 @@
 package com.roy.datajpa.repository.pure;
 
-import com.roy.datajpa.domain.SoccerPlayer;
 import com.roy.datajpa.domain.Team;
 import org.springframework.stereotype.Repository;
 
@@ -26,8 +25,12 @@ public class TeamPureRepository {
         return answer;
     }
 
-    public void remove(Team team) {
+    public void delete(Team team) {
         entityManager.remove(team);
+    }
+
+    public void deleteAll(List<Team> teams) {
+        teams.forEach(this::delete);
     }
 
     public List<Team> findAll() {

@@ -29,6 +29,10 @@ public class SoccerPlayerPureRepository {
         entityManager.remove(soccerPlayer);
     }
 
+    public void deleteAll(List<SoccerPlayer> soccerPlayers) {
+        soccerPlayers.forEach(this::delete);
+    }
+
     public List<SoccerPlayer> findAll() {
         return entityManager.createQuery(
                 "SELECT SC FROM SoccerPlayer SC", SoccerPlayer.class)
