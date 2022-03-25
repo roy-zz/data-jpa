@@ -2,6 +2,9 @@ package com.roy.datajpa.repository.data;
 
 import com.roy.datajpa.domain.SoccerPlayer;
 import com.roy.datajpa.repository.data.query.dto.SoccerPlayerResponseDTO;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Slice;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
@@ -59,5 +62,16 @@ public interface SoccerPlayerDataRepository extends JpaRepository<SoccerPlayer, 
     SoccerPlayer findOneByName(String name);
 
     Optional<SoccerPlayer> findOptionalOneByName(String name);
+
+    Page<SoccerPlayer> findPageByNameIsNotNull(Pageable pageable);
+
+    @Query(value = "SELECT SP " +
+                   "FROM SoccerPlayer SP " +
+                   "        LEFT JOIN SP.team T " +
+                   "WHERE SP.name IS NOT NULL",
+           countQuery = "SELECT SP FROM SoccerPlayer SP")
+    Page<SoccerPlayer> findCustomPageByNameIsNotNull(Pageable pageable);
+
+    Slice<SoccerPlayer> findSliceByNameIsNotNull(Pageable pageable);
 
 }

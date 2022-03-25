@@ -1,6 +1,7 @@
 package com.roy.datajpa.repository.pure;
 
 import com.roy.datajpa.domain.SoccerPlayer;
+import org.springframework.data.domain.*;
 import org.springframework.stereotype.Repository;
 
 import javax.persistence.EntityManager;
@@ -74,6 +75,27 @@ public class SoccerPlayerPureRepository {
         return entityManager.createNamedQuery("SoccerPlayer.findByHeightGreaterThan", SoccerPlayer.class)
                 .setParameter("height", height)
                 .getResultList();
+    }
+
+    public Page<SoccerPlayer> findAllPage(int page, int size) {
+        int offset = size * page;
+        List<SoccerPlayer> content = entityManager.createQuery(
+                "SELECT SP " +
+                        "FROM SoccerPlayer SP " +
+                        "ORDER BY SP.height DESC ", SoccerPlayer.class)
+                .setFirstResult(offset)
+                .setMaxResults(size)
+                .getResultList();
+
+        long totalCount = entityManager.createQuery(
+                "SELECT COUNT(SP) " +
+                        "FROM SoccerPlayer SP " +
+                        "ORDER BY SP.height DESC ", Long.class)
+                .getSingleResult();
+        Sort sort = Sort.by(Sort.Direction.DESC, "height");
+        Pageable pageable = PageRequest.of(page, size, sort);
+
+        return new PageImpl<>(content, pageable, totalCount);
     }
 
 }

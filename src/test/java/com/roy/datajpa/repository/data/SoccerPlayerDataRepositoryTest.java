@@ -6,6 +6,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Slice;
+import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -13,6 +17,7 @@ import java.util.Set;
 import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.assertTrue;
 
 @Transactional
 @SpringBootTest
@@ -194,6 +199,77 @@ class SoccerPlayerDataRepositoryTest {
 
         List<SoccerPlayer> result = dataRepository.findByIdIn(targetIds);
         assertEquals(2, result.size());
+    }
+
+    @Test
+    @DisplayName("페이징 테스트")
+    void pagingTest() {
+        List<SoccerPlayer> players = List.of(
+                new SoccerPlayer("Roy", 173),
+                new SoccerPlayer("Perry", 180),
+                new SoccerPlayer("Sally", 160),
+                new SoccerPlayer("Dice", 183),
+                new SoccerPlayer("Louis", 178)
+        );
+        dataRepository.saveAll(players);
+
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "height"));
+        Page<SoccerPlayer> pageOfResult = dataRepository.findPageByNameIsNotNull(pageRequest);
+        List<SoccerPlayer> listOfResult = pageOfResult.getContent();
+
+        assertEquals(3, listOfResult.size());
+        assertEquals(5, pageOfResult.getTotalElements());
+        assertEquals(0, pageOfResult.getNumber());
+        assertEquals(2, pageOfResult.getTotalPages());
+        assertTrue(pageOfResult.isFirst());
+        assertTrue(pageOfResult.hasNext());
+    }
+
+    @Test
+    @DisplayName("Slice 테스트")
+    void sliceTest() {
+        List<SoccerPlayer> players = List.of(
+                new SoccerPlayer("Roy", 173),
+                new SoccerPlayer("Perry", 180),
+                new SoccerPlayer("Sally", 160),
+                new SoccerPlayer("Dice", 183),
+                new SoccerPlayer("Louis", 178)
+        );
+        dataRepository.saveAll(players);
+
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "height"));
+        Slice<SoccerPlayer> pageOfResult = dataRepository.findSliceByNameIsNotNull(pageRequest);
+        List<SoccerPlayer> listOfResult = pageOfResult.getContent();
+
+        assertEquals(3, listOfResult.size());
+        // assertEquals(5, pageOfResult.getTotalElements()); // 컴파일 에러
+        assertEquals(0, pageOfResult.getNumber());
+        // assertEquals(2, pageOfResult.getTotalPages()); // 컴파일 에러
+        assertTrue(pageOfResult.isFirst());
+        assertTrue(pageOfResult.hasNext());
+    }
+
+    @Test
+    @DisplayName("Page map 테스트")
+    void pagingMapTest() {
+        List<SoccerPlayer> players = List.of(
+                new SoccerPlayer("Roy", 173),
+                new SoccerPlayer("Perry", 180),
+                new SoccerPlayer("Sally", 160),
+                new SoccerPlayer("Dice", 183),
+                new SoccerPlayer("Louis", 178)
+        );
+        dataRepository.saveAll(players);
+
+        PageRequest pageRequest = PageRequest.of(0, 3, Sort.by(Sort.Direction.DESC, "height"));
+        Page<SoccerPlayer> entityResult = dataRepository.findPageByNameIsNotNull(pageRequest);
+        List<SoccerPlayer> listOfEntity = entityResult.getContent();
+
+        Page<SoccerPlayerResponseDTO> dtoResult = entityResult.map(SoccerPlayerResponseDTO::of);
+        List<SoccerPlayerResponseDTO> listOfDto = dtoResult.getContent();
+
+        assertEquals(listOfEntity.get(0).getClass(), SoccerPlayer.class);
+        assertEquals(listOfDto.get(0).getClass(), SoccerPlayerResponseDTO.class);
     }
 
 }

@@ -5,6 +5,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
+import org.springframework.data.domain.Page;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
@@ -102,6 +103,24 @@ class SoccerPlayerPureRepositoryTest {
         assertEquals(1, result.size());
         assertEquals("Perry", result.get(0).getName());
         assertEquals(183, result.get(0).getHeight());
+    }
+
+    @Test
+    @DisplayName("페이징 테스트")
+    void pagingTest() {
+        List<SoccerPlayer> players = List.of(
+                new SoccerPlayer("Roy"),
+                new SoccerPlayer("Perry"),
+                new SoccerPlayer("Sally"),
+                new SoccerPlayer("Dice"),
+                new SoccerPlayer("Louis")
+        );
+        pureRepository.saveAll(players);
+
+        Page<SoccerPlayer> pageOfPlayers = pureRepository.findAllPage(1, 2);
+        List<SoccerPlayer> listOfPlayers = pageOfPlayers.getContent();
+        assertEquals(2, listOfPlayers.size());
+        assertEquals(5, pageOfPlayers.getTotalElements());
     }
 
 }
