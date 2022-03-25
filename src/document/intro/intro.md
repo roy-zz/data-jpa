@@ -223,6 +223,8 @@ public interface TeamDataRepository extends JpaRepository<Team, Long> {
 3. 인터페이스이며 우리는 구현체를 만들지 않았다.
 
 이렇게만 구현을 하여도 순수 JPA 기반의 리포지토리와 동일하게 작동한다.
+또한 JpaRepository를 상속받고 있는 리포지토리는 @Repository를 등록하지 않아도 Spring에 의해 Bean으로 등록되어진다.
+JPA의 예외 사항도 Spring의 예외로 변환해주기 때문에 예외 상황 처리도 편해진다.
 바로 아래에서 같은 기능을 하는 테스트 코드를 작성해보고 어떻게 작동하는지 확인해본다.
 
 ---
