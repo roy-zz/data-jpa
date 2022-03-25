@@ -1,9 +1,6 @@
 package com.roy.datajpa.domain;
 
-import lombok.Getter;
-import lombok.NoArgsConstructor;
-import lombok.Setter;
-import lombok.ToString;
+import lombok.*;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -20,6 +17,7 @@ import static lombok.AccessLevel.PROTECTED;
                 query = "SELECT SP FROM SoccerPlayer SP WHERE SP.height > :height")
 })
 @Getter @Setter
+@EqualsAndHashCode
 @ToString(of = {"id", "name", "height", "weight"})
 @NoArgsConstructor(access = PROTECTED)
 public class SoccerPlayer {

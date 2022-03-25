@@ -9,6 +9,8 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
+import java.util.Set;
+import java.util.stream.Collectors;
 
 import static org.junit.jupiter.api.Assertions.assertEquals;
 
@@ -154,6 +156,44 @@ class SoccerPlayerDataRepositoryTest {
         assertEquals(players.get(0).getHeight(), result.get(0).getHeight());
 
         result.forEach(r -> System.out.println("r.getClass() = " + r.getClass()));
+    }
+
+    @Test
+    @DisplayName("파라미터 바인딩 위치기반 vs 이름기반 테스트")
+    void parameterBindingTest() {
+        List<SoccerPlayer> players = List.of(
+                new SoccerPlayer("Roy", 173),
+                new SoccerPlayer("Perry", 183)
+        );
+        dataRepository.saveAll(players);
+
+        List<SoccerPlayer> positionBaseResult =
+                dataRepository.findByNameAndHeightWithPositionBaseBinding("Perry", 180);
+        List<SoccerPlayer> nameBaseResult =
+                dataRepository.findByNameAndHeightWithNameBaseBinding("Perry", 180);
+        assertEquals(nameBaseResult.size(), positionBaseResult.size());
+
+        for (int i = 0; i < positionBaseResult.size(); i++) {
+            assertEquals(positionBaseResult.get(i), nameBaseResult.get(i));
+        }
+
+    }
+
+    @Test
+    @DisplayName("파라미터 바인딩 Collection 타입 테스트")
+    void collectionBindingTest() {
+        List<SoccerPlayer> players = List.of(
+                new SoccerPlayer("Roy", 173),
+                new SoccerPlayer("Perry", 183)
+        );
+        dataRepository.saveAll(players);
+
+        Set<Long> targetIds = players.stream()
+                .map(SoccerPlayer::getId)
+                .collect(Collectors.toSet());
+
+        List<SoccerPlayer> result = dataRepository.findByIdIn(targetIds);
+        assertEquals(2, result.size());
     }
 
 }

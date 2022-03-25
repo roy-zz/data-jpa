@@ -7,6 +7,8 @@ import org.springframework.data.jpa.repository.Query;
 import org.springframework.data.repository.query.Param;
 
 import java.util.List;
+import java.util.Optional;
+import java.util.Set;
 
 public interface SoccerPlayerDataRepository extends JpaRepository<SoccerPlayer, Long> {
 
@@ -28,5 +30,34 @@ public interface SoccerPlayerDataRepository extends JpaRepository<SoccerPlayer, 
             "(SP.name, SP.height, SP.weight) " +
             "FROM SoccerPlayer SP")
     List<SoccerPlayerResponseDTO> findDTOAllUsingQueryAnnotation();
+
+    @Query(value =
+            "SELECT SP " +
+            "FROM SoccerPlayer SP " +
+            "WHERE " +
+            "   SP.name = ?1 " +
+            "   AND SP.height > ?2 ")
+    List<SoccerPlayer> findByNameAndHeightWithPositionBaseBinding(String name, int height);
+
+    @Query(value =
+            "SELECT SP " +
+            "FROM SoccerPlayer SP " +
+            "WHERE " +
+            "   SP.name = :name " +
+            "   AND SP.height > :height ")
+    List<SoccerPlayer> findByNameAndHeightWithNameBaseBinding(String name, int height);
+
+    @Query(value =
+            "SELECT SP " +
+            "FROM SoccerPlayer SP " +
+            "WHERE " +
+            "   SP.id IN :ids ")
+    List<SoccerPlayer> findByIdIn(Set<Long> ids);
+
+    List<SoccerPlayer> findAllByName(String name);
+
+    SoccerPlayer findOneByName(String name);
+
+    Optional<SoccerPlayer> findOptionalOneByName(String name);
 
 }
