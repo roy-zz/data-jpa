@@ -1,6 +1,7 @@
 package com.roy.datajpa.repository.data;
 
 import com.roy.datajpa.domain.SoccerPlayer;
+import com.roy.datajpa.repository.data.query.dto.SoccerPlayerResponseDTO;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -121,6 +122,38 @@ class SoccerPlayerDataRepositoryTest {
         assertEquals(1, result.size());
         assertEquals("Perry", result.get(0).getName());
         assertEquals(183, result.get(0).getHeight());
+    }
+
+    @Test
+    @DisplayName("@Query Entity 조회 테스트")
+    void queryAnnotationFindEntityTest() {
+        List<SoccerPlayer> players = List.of(
+                new SoccerPlayer("Roy", 173),
+                new SoccerPlayer("Perry", 183)
+        );
+        dataRepository.saveAll(players);
+
+        List<SoccerPlayer> result =
+                dataRepository.findEntityAllUsingQueryAnnotation();
+        assertEquals(2, result.size());
+    }
+
+    @Test
+    @DisplayName("@Query DTO 조회 테스트")
+    void queryAnnotationFindDTOTest() {
+        List<SoccerPlayer> players = List.of(
+                new SoccerPlayer("Roy", 173),
+                new SoccerPlayer("Perry", 183)
+        );
+        dataRepository.saveAll(players);
+
+        List<SoccerPlayerResponseDTO> result =
+                dataRepository.findDTOAllUsingQueryAnnotation();
+        assertEquals(2, result.size());
+        assertEquals(players.get(0).getName(), result.get(0).getName());
+        assertEquals(players.get(0).getHeight(), result.get(0).getHeight());
+
+        result.forEach(r -> System.out.println("r.getClass() = " + r.getClass()));
     }
 
 }
