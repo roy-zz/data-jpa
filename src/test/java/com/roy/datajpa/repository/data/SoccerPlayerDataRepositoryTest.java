@@ -272,4 +272,21 @@ class SoccerPlayerDataRepositoryTest {
         assertEquals(listOfDto.get(0).getClass(), SoccerPlayerResponseDTO.class);
     }
 
+    @Test
+    @DisplayName("벌크 업데이트 테스트")
+    void bulkUpdateTest() {
+        List<SoccerPlayer> players = List.of(
+                new SoccerPlayer("Roy", 173, 73),
+                new SoccerPlayer("Perry", 180, 80),
+                new SoccerPlayer("Sally", 160, 60),
+                new SoccerPlayer("Dice", 183, 83),
+                new SoccerPlayer("Louis", 178, 78)
+        );
+        dataRepository.saveAll(players);
+        int updatedCount = dataRepository.bulkUpdate(170);
+        assertEquals(4, updatedCount);
+        SoccerPlayer storedPlayer = dataRepository.findOneByName("Roy");
+        assertEquals(83, storedPlayer.getWeight());
+    }
+
 }

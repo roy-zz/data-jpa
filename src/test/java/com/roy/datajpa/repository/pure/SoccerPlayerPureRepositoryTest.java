@@ -123,4 +123,22 @@ class SoccerPlayerPureRepositoryTest {
         assertEquals(5, pageOfPlayers.getTotalElements());
     }
 
+    @Test
+    @DisplayName("벌크 업데이트 테스트")
+    void bulkUpdateTest() {
+        List<SoccerPlayer> players = List.of(
+                new SoccerPlayer("Roy", 173, 73),
+                new SoccerPlayer("Perry", 180, 80),
+                new SoccerPlayer("Sally", 160, 60),
+                new SoccerPlayer("Dice", 183, 83),
+                new SoccerPlayer("Louis", 178, 78)
+        );
+        pureRepository.saveAll(players);
+        int updatedCount = pureRepository.bulkUpdate(170);
+        assertEquals(4, updatedCount);
+        pureRepository.clear();
+        SoccerPlayer storedPlayer = pureRepository.findByName("Roy");
+        assertEquals(83, storedPlayer.getWeight());
+    }
+
 }

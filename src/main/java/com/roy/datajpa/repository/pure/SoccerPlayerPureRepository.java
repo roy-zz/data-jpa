@@ -26,6 +26,10 @@ public class SoccerPlayerPureRepository {
         return answer;
     }
 
+    public void clear() {
+        entityManager.clear();
+    }
+
     public void delete(SoccerPlayer soccerPlayer) {
         entityManager.remove(soccerPlayer);
     }
@@ -96,6 +100,21 @@ public class SoccerPlayerPureRepository {
         Pageable pageable = PageRequest.of(page, size, sort);
 
         return new PageImpl<>(content, pageable, totalCount);
+    }
+
+    public int bulkUpdate(int height) {
+        return entityManager.createQuery(
+                "UPDATE SoccerPlayer SP SET SP.weight = SP.weight + 10 " +
+                        "WHERE SP.height > :height")
+                .setParameter("height", height)
+                .executeUpdate();
+    }
+
+    public SoccerPlayer findByName(String name) {
+        return entityManager.createQuery(
+                "SELECT SP FROM SoccerPlayer SP WHERE SP.name = :name", SoccerPlayer.class)
+                .setParameter("name", name)
+                .getSingleResult();
     }
 
 }
