@@ -52,4 +52,16 @@ public class SoccerPlayerPureRepository {
                 .getSingleResult();
     }
 
+    public List<SoccerPlayer> findByNameAndHeightGreaterThan(String name, int height) {
+        return entityManager.createQuery(
+                "SELECT SP " +
+                        "FROM SoccerPlayer SP " +
+                        "WHERE " +
+                        "   SP.name = :name " +
+                        "   AND SP.height >= :height", SoccerPlayer.class)
+                .setParameter("name", name)
+                .setParameter("height", height)
+                .getResultList();
+    }
+
 }

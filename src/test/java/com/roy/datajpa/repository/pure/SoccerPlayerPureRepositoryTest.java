@@ -56,7 +56,21 @@ class SoccerPlayerPureRepositoryTest {
 
         long deletedCount = pureRepository.count();
         assertEquals(0, deletedCount);
+    }
 
+    @Test
+    @DisplayName("메소드 이름기반 쿼리 테스트 키 기준 조회")
+    void methodNameQueryByHeightTest() {
+        List<SoccerPlayer> players = List.of(
+                new SoccerPlayer("Roy", 173),
+                new SoccerPlayer("Roy", 183)
+        );
+        pureRepository.saveAll(players);
+
+        List<SoccerPlayer> result = pureRepository.findByNameAndHeightGreaterThan("Roy", 180);
+        assertEquals(1, result.size());
+        assertEquals("Roy", result.get(0).getName());
+        assertEquals(183, result.get(0).getHeight());;
     }
 
 }

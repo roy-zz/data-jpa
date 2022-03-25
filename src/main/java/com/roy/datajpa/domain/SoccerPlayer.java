@@ -1,17 +1,18 @@
 package com.roy.datajpa.domain;
 
-import com.fasterxml.jackson.annotation.JsonIgnore;
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
-
 import java.util.Objects;
 
-import static lombok.AccessLevel.*;
+import static lombok.AccessLevel.PROTECTED;
 
 @Entity
 @Getter @Setter
-@ToString(of = {"id", "name", "age"})
+@ToString(of = {"id", "name", "height", "weight"})
 @NoArgsConstructor(access = PROTECTED)
 public class SoccerPlayer {
 
@@ -19,7 +20,8 @@ public class SoccerPlayer {
     @Column(name = "soccer_player_id")
     private Long id;
     private String name;
-    private int age;
+    private int height;
+    private int weight;
 
     @ManyToOne(fetch = FetchType.LAZY)
     @JoinColumn(name = "team_id")
@@ -29,13 +31,18 @@ public class SoccerPlayer {
         this(name, 0);
     }
 
-    public SoccerPlayer(String name, int age) {
-        this(name, age, null);
+    public SoccerPlayer(String name, int height) {
+        this(name, height, 0);
     }
 
-    public SoccerPlayer(String name, int age, Team team) {
+    public SoccerPlayer(String name, int height, int weight) {
+        this(name, height, weight, null);
+    }
+
+    public SoccerPlayer(String name, int height, int weight, Team team) {
         this.name = name;
-        this.age = age;
+        this.height = height;
+        this.weight = weight;
         if (Objects.nonNull(team)) {
             changeTeam(team);
         }

@@ -59,4 +59,37 @@ class SoccerPlayerDataRepositoryTest {
 
     }
 
+    @Test
+    @DisplayName("메소드 이름기반 쿼리 테스트 (키를 기준으로 조회)")
+    void methodNameQueryByHeightTest() {
+        List<SoccerPlayer> players = List.of(
+                new SoccerPlayer("Roy", 173),
+                new SoccerPlayer("Roy", 183)
+        );
+        dataRepository.saveAll(players);
+
+        List<SoccerPlayer> result = dataRepository.findByNameAndHeightGreaterThan("Roy", 180);
+        assertEquals(1, result.size());
+        assertEquals("Roy", result.get(0).getName());
+        assertEquals(183, result.get(0).getHeight());;
+    }
+
+    @Test
+    @DisplayName("메소드 이름기반 쿼리 테스트 (키와 몸무게를 기준으로 조회)")
+    void methodNameQueryByHeightAndWeightTest() {
+        List<SoccerPlayer> players = List.of(
+                new SoccerPlayer("Roy", 173, 90),
+                new SoccerPlayer("Roy", 183, 100),
+                new SoccerPlayer("Roy", 183, 85)
+        );
+        dataRepository.saveAll(players);
+
+        List<SoccerPlayer> result =
+                dataRepository.findByNameAndHeightGreaterThanAndWeightLessThan("Roy", 180, 90);
+        assertEquals(1, result.size());
+        assertEquals("Roy", result.get(0).getName());
+        assertEquals(183, result.get(0).getHeight());
+        assertEquals(85, result.get(0).getWeight());
+    }
+
 }
