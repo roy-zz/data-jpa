@@ -1,6 +1,8 @@
 package com.roy.datajpa.repository.pure;
 
 import com.roy.datajpa.domain.SoccerPlayer;
+import com.roy.datajpa.domain.Team;
+import org.hibernate.Hibernate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -10,10 +12,10 @@ import org.springframework.transaction.annotation.Transactional;
 
 import java.util.List;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
-@SpringBootTest
+@SpringBootTest(properties = "test")
 class SoccerPlayerPureRepositoryTest {
 
     @Autowired
@@ -139,6 +141,44 @@ class SoccerPlayerPureRepositoryTest {
         pureRepository.clear();
         SoccerPlayer storedPlayer = pureRepository.findByName("Roy");
         assertEquals(83, storedPlayer.getWeight());
+    }
+
+    @Test
+    @DisplayName("N + 1 발생 검증 테스트")
+    void isOccurNPlusOneTest() {
+        List<SoccerPlayer> soccerPlayers = List.of(
+                new SoccerPlayer("Roy", 173, 75, new Team("TeamA")),
+                new SoccerPlayer("Perry", 180, 80, new Team("TeamB"))
+        );
+        pureRepository.saveAll(soccerPlayers);
+        pureRepository.flushAndClear();
+
+        List<SoccerPlayer> storedPlayers = pureRepository.findAll();
+
+        storedPlayers.forEach(player -> {
+            assertFalse(Hibernate.isInitialized(player.getTeam()));
+            System.out.println("player.getTeam().getName() = " + player.getTeam().getName());
+            assertTrue(Hibernate.isInitialized(player.getTeam()));
+        });
+    }
+
+    @Test
+    @DisplayName("Fetch Join을 사용하고 N + 1이 발생하지 않음을 검증")
+    void isNotOccurNPlusOneTest() {
+        List<SoccerPlayer> soccerPlayers = List.of(
+                new SoccerPlayer("Roy", 173, 75, new Team("TeamA")),
+                new SoccerPlayer("Perry", 180, 80, new Team("TeamB"))
+        );
+
+        pureRepository.saveAll(soccerPlayers);
+        pureRepository.flushAndClear();
+
+        List<SoccerPlayer> storedPlayers = pureRepository.findAllUsingFetchJoin();
+
+        storedPlayers.forEach(player -> {
+            assertTrue(Hibernate.isInitialized(player.getTeam()));
+            System.out.println("player.getTeam().getName() = " + player.getTeam().getName());
+        });
     }
 
 }

@@ -26,6 +26,15 @@ public class SoccerPlayerPureRepository {
         return answer;
     }
 
+    public void flushAndClear() {
+        flush();
+        clear();
+    }
+
+    public void flush() {
+        entityManager.flush();
+    }
+
     public void clear() {
         entityManager.clear();
     }
@@ -115,6 +124,15 @@ public class SoccerPlayerPureRepository {
                 "SELECT SP FROM SoccerPlayer SP WHERE SP.name = :name", SoccerPlayer.class)
                 .setParameter("name", name)
                 .getSingleResult();
+    }
+
+    public List<SoccerPlayer> findAllUsingFetchJoin() {
+        return entityManager.createQuery(
+                "SELECT SP " +
+                        "FROM " +
+                        "   SoccerPlayer SP " +
+                        "       JOIN FETCH SP.team T ", SoccerPlayer.class)
+                .getResultList();
     }
 
 }

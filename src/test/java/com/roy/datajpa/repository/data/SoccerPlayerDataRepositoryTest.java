@@ -1,7 +1,9 @@
 package com.roy.datajpa.repository.data;
 
 import com.roy.datajpa.domain.SoccerPlayer;
+import com.roy.datajpa.domain.Team;
 import com.roy.datajpa.repository.data.query.dto.SoccerPlayerResponseDTO;
+import org.hibernate.Hibernate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -287,6 +289,51 @@ class SoccerPlayerDataRepositoryTest {
         assertEquals(4, updatedCount);
         SoccerPlayer storedPlayer = dataRepository.findOneByName("Roy");
         assertEquals(83, storedPlayer.getWeight());
+    }
+
+    @Test
+    @DisplayName("순수 @EntityGraph 테스트")
+    void onlyEntityGraphTest() {
+        List<SoccerPlayer> soccerPlayers = List.of(
+                new SoccerPlayer("Roy", 173, 75, new Team("TeamA")),
+                new SoccerPlayer("Perry", 180, 80, new Team("TeamB"))
+        );
+        dataRepository.saveAll(soccerPlayers);
+
+        List<SoccerPlayer> storedPlayers = dataRepository.findAll();
+        storedPlayers.forEach(player -> {
+            assertTrue(Hibernate.isInitialized(player));
+        });
+    }
+
+    @Test
+    @DisplayName("JPQL + @EntityGraph 테스트")
+    void jqplAndEntityGraphTest() {
+        List<SoccerPlayer> soccerPlayers = List.of(
+                new SoccerPlayer("Roy", 173, 75, new Team("TeamA")),
+                new SoccerPlayer("Perry", 180, 80, new Team("TeamB"))
+        );
+        dataRepository.saveAll(soccerPlayers);
+
+        List<SoccerPlayer> storedPlayers = dataRepository.findAllUsingJpqlEntityGraph();
+        storedPlayers.forEach(player -> {
+            assertTrue(Hibernate.isInitialized(player));
+        });
+    }
+
+    @Test
+    @DisplayName("메서드 명 쿼리 + @EntityGraph 테스트")
+    void methodNameAndEntityGraphTest() {
+        List<SoccerPlayer> soccerPlayers = List.of(
+                new SoccerPlayer("Roy", 173, 75, new Team("TeamA")),
+                new SoccerPlayer("Perry", 180, 80, new Team("TeamB"))
+        );
+        dataRepository.saveAll(soccerPlayers);
+
+        List<SoccerPlayer> storedPlayers = dataRepository.findAllByName("Roy");
+        storedPlayers.forEach(player -> {
+            assertTrue(Hibernate.isInitialized(player));
+        });
     }
 
 }

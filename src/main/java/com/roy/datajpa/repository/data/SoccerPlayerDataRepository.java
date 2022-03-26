@@ -5,6 +5,7 @@ import com.roy.datajpa.repository.data.query.dto.SoccerPlayerResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
+import org.springframework.data.jpa.repository.EntityGraph;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Modifying;
 import org.springframework.data.jpa.repository.Query;
@@ -58,8 +59,6 @@ public interface SoccerPlayerDataRepository extends JpaRepository<SoccerPlayer, 
             "   SP.id IN :ids ")
     List<SoccerPlayer> findByIdIn(Set<Long> ids);
 
-    List<SoccerPlayer> findAllByName(String name);
-
     SoccerPlayer findOneByName(String name);
 
     Optional<SoccerPlayer> findOptionalOneByName(String name);
@@ -81,5 +80,16 @@ public interface SoccerPlayerDataRepository extends JpaRepository<SoccerPlayer, 
             "SET SP.weight = SP.weight + 10 " +
             "WHERE SP.height > :height")
     int bulkUpdate(int height);
+
+    @Override
+    @EntityGraph(attributePaths = {"team"})
+    List<SoccerPlayer> findAll();
+
+    @EntityGraph(attributePaths = {"team"})
+    @Query("SELECT SP FROM SoccerPlayer SP")
+    List<SoccerPlayer> findAllUsingJpqlEntityGraph();
+
+    @EntityGraph(attributePaths = {"team"})
+    List<SoccerPlayer> findAllByName(String name);
 
 }

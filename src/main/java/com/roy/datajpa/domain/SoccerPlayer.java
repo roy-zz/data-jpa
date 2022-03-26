@@ -5,6 +5,8 @@ import lombok.*;
 import javax.persistence.*;
 import java.util.Objects;
 
+import static javax.persistence.CascadeType.ALL;
+import static javax.persistence.FetchType.LAZY;
 import static lombok.AccessLevel.PROTECTED;
 
 @Entity
@@ -29,7 +31,7 @@ public class SoccerPlayer {
     private int height;
     private int weight;
 
-    @ManyToOne(fetch = FetchType.LAZY)
+    @ManyToOne(fetch = LAZY, cascade = ALL)
     @JoinColumn(name = "team_id")
     private Team team;
 
