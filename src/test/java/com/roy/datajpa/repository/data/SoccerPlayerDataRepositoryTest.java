@@ -20,8 +20,7 @@ import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
 
-import static org.junit.jupiter.api.Assertions.assertEquals;
-import static org.junit.jupiter.api.Assertions.assertTrue;
+import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
 @SpringBootTest
@@ -375,6 +374,41 @@ class SoccerPlayerDataRepositoryTest {
     @DisplayName("사용자 정의 리포지토리 정상 작동 테스트")
     void customRepositoryTest() {
         dataRepository.findCustomByName("Roy");
+    }
+    
+    @Test
+    @DisplayName("Auditing 테스트")
+    void auditingTest() {
+        SoccerPlayer soccerPlayer = new SoccerPlayer("Roy", 173);
+        dataRepository.save(soccerPlayer);
+        soccerPlayer.setHeight(183);
+        entityManager.flush();
+        entityManager.clear();
+
+        SoccerPlayer storedPlayer = dataRepository.findOneByName("Roy");
+        System.out.println("storedPlayer.getCreatedAt() = " + storedPlayer.getCreatedAt());
+        System.out.println("storedPlayer.getUpdatedAt() = " + storedPlayer.getUpdatedAt());
+        System.out.println("storedPlayer.getCreatedBy() = " + storedPlayer.getCreatedBy());
+        System.out.println("storedPlayer.getUpdatedBy() = " + storedPlayer.getUpdatedBy());
+    }
+
+    @Test
+    @DisplayName("modifyOnCreate = false 정상 작동 테스트")
+    void modifyOnCreateFalseTest() {
+        SoccerPlayer soccerPlayer = new SoccerPlayer("Roy", 173);
+        dataRepository.save(soccerPlayer);
+        entityManager.flush();
+        entityManager.clear();
+
+        SoccerPlayer storedPlayer = dataRepository.findOneByName("Roy");
+        assertNull(storedPlayer.getUpdatedAt());
+
+        storedPlayer.setHeight(183);
+        entityManager.flush();
+        entityManager.clear();
+
+        SoccerPlayer updatedPlayer = dataRepository.findOneByName("Roy");
+        assertNotNull(updatedPlayer.getUpdatedAt());
     }
 
 }

@@ -19,10 +19,10 @@ import static lombok.AccessLevel.PROTECTED;
                 query = "SELECT SP FROM SoccerPlayer SP WHERE SP.height > :height")
 })
 @Getter @Setter
-@EqualsAndHashCode
+@EqualsAndHashCode(callSuper = true)
 @ToString(of = {"id", "name", "height", "weight"})
 @NoArgsConstructor(access = PROTECTED)
-public class SoccerPlayer {
+public class SoccerPlayer extends DataBaseEntity {
 
     @Id @GeneratedValue
     @Column(name = "soccer_player_id")

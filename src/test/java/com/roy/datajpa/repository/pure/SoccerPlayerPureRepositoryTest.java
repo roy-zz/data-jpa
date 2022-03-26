@@ -15,7 +15,7 @@ import java.util.List;
 import static org.junit.jupiter.api.Assertions.*;
 
 @Transactional
-@SpringBootTest(properties = "test")
+@SpringBootTest
 class SoccerPlayerPureRepositoryTest {
 
     @Autowired
@@ -179,6 +179,19 @@ class SoccerPlayerPureRepositoryTest {
             assertTrue(Hibernate.isInitialized(player.getTeam()));
             System.out.println("player.getTeam().getName() = " + player.getTeam().getName());
         });
+    }
+
+    @Test
+    @DisplayName("Auditing 테스트")
+    void auditingTest() {
+        SoccerPlayer soccerPlayer = new SoccerPlayer("Roy", 173);
+        pureRepository.save(soccerPlayer);
+        soccerPlayer.setHeight(183);
+        pureRepository.flushAndClear();
+        
+        SoccerPlayer storedPlayer = pureRepository.findByName("Roy");
+        System.out.println("storedPlayer.getCreatedAt() = " + storedPlayer.getCreatedAt());
+        System.out.println("storedPlayer.getUpdatedAt() = " + storedPlayer.getUpdatedAt());
     }
 
 }
