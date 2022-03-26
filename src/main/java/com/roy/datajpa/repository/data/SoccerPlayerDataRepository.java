@@ -1,6 +1,7 @@
 package com.roy.datajpa.repository.data;
 
 import com.roy.datajpa.domain.SoccerPlayer;
+import com.roy.datajpa.repository.data.custom.SoccerPlayerDataRepositoryCustom;
 import com.roy.datajpa.repository.data.query.dto.SoccerPlayerResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -14,7 +15,9 @@ import java.util.List;
 import java.util.Optional;
 import java.util.Set;
 
-public interface SoccerPlayerDataRepository extends JpaRepository<SoccerPlayer, Long> {
+public interface SoccerPlayerDataRepository extends
+        JpaRepository<SoccerPlayer, Long>,
+        SoccerPlayerDataRepositoryCustom {
 
     List<SoccerPlayer> findByNameAndHeightGreaterThan(String name, int height);
 

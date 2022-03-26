@@ -19,9 +19,71 @@ Spring Data JPA 리포지토리는 인터페이스만 정의하고 구현체는 
 
 ---
 
+사용법은 아래와 같다.
 
+사용자 정의 리포지토리를 위한 사용자 정의 인터페이스를 정의한다.
 
+**SoccerPlayerDataRepositoryCustom**
 
+```java
+public interface SoccerPlayerDataRepositoryCustom {
+    List<SoccerPlayer> findCustomByName(String name);
+}
+```
+
+사용자 정의 인터페이스의 구현체를 생성한다.
+
+**SoccerPlayerDataRepositoryCustomImpl**
+
+```java
+@RequiredArgsConstructor
+public class SoccerPlayerDataRepositoryCustomImpl implements SoccerPlayerDataRepositoryCustom {
+
+    private final EntityManager entityManager;
+
+    @Override
+    public List<SoccerPlayer> findCustomByName(String name) {
+        return entityManager.createQuery(
+                "SELECT SP FROM SoccerPlayer SP WHERE SP.name = :name", SoccerPlayer.class)
+                .setParameter("name", name)
+                .getResultList();
+    }
+}
+```
+
+Data JPA를 위한 인터페이스가 사용자 정의 인터페이스를 상속받도록 한다.
+
+**SoccerPlayerDataRepository**
+
+```java
+public interface SoccerPlayerDataRepository extends
+        JpaRepository<SoccerPlayer, Long>,
+        SoccerPlayerDataRepositoryCustom {
+    // 이하 생략
+}
+```
+
+테스트 코드를 확인해보면 SoccerPlayerDataRepository를 통해서 사용자 정의 리포지토리의 메소드가 호출되는 것을 확인할 수 있다.
+
+**SoccerPlayerDataRepositoryTest**
+
+```java
+@Transactional
+@SpringBootTest
+class SoccerPlayerDataRepositoryTest {
+    @PersistenceContext
+    private EntityManager entityManager;
+    @Autowired
+    private SoccerPlayerDataRepository dataRepository;
+    @Test
+    @DisplayName("사용자 정의 리포지토리 정상 작동 테스트")
+    void customRepositoryTest() {
+        dataRepository.findCustomByName("Roy");
+    }
+}
+```
+
+---
 
 
 ---

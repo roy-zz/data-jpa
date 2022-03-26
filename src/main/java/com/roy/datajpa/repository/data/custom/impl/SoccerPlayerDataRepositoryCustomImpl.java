@@ -8,7 +8,7 @@ import javax.persistence.EntityManager;
 import java.util.List;
 
 @RequiredArgsConstructor
-public class SoccerPlayerDataRepositoryImpl implements SoccerPlayerDataRepositoryCustom {
+public class SoccerPlayerDataRepositoryCustomImpl implements SoccerPlayerDataRepositoryCustom {
 
     private final EntityManager entityManager;
 

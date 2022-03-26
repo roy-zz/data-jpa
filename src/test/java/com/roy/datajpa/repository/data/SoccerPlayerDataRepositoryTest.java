@@ -371,4 +371,10 @@ class SoccerPlayerDataRepositoryTest {
         dataRepository.findUsingLockByName("Roy");
     }
 
+    @Test
+    @DisplayName("사용자 정의 리포지토리 정상 작동 테스트")
+    void customRepositoryTest() {
+        dataRepository.findCustomByName("Roy");
+    }
+
 }
