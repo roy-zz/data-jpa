@@ -14,6 +14,8 @@ import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
 import org.springframework.transaction.annotation.Transactional;
 
+import javax.persistence.EntityManager;
+import javax.persistence.PersistenceContext;
 import java.util.List;
 import java.util.Set;
 import java.util.stream.Collectors;
@@ -24,6 +26,9 @@ import static org.junit.jupiter.api.Assertions.assertTrue;
 @Transactional
 @SpringBootTest
 class SoccerPlayerDataRepositoryTest {
+
+    @PersistenceContext
+    private EntityManager entityManager;
 
     @Autowired
     private SoccerPlayerDataRepository dataRepository;
@@ -334,6 +339,36 @@ class SoccerPlayerDataRepositoryTest {
         storedPlayers.forEach(player -> {
             assertTrue(Hibernate.isInitialized(player));
         });
+    }
+
+    @Test
+    @DisplayName("Hint Updatable 테스트")
+    void hintUpdatableTest() {
+        SoccerPlayer newPlayer = new SoccerPlayer("Roy");
+        dataRepository.save(newPlayer);
+        entityManager.flush();
+        entityManager.clear();
+        SoccerPlayer storedPlayer = dataRepository.findUpdatableByName("Roy");
+        storedPlayer.setHeight(183);
+        entityManager.flush();
+    }
+
+    @Test
+    @DisplayName("Hint ReadOnly 테스트")
+    void hintReadOnlyTest() {
+        SoccerPlayer newPlayer = new SoccerPlayer("Roy");
+        dataRepository.save(newPlayer);
+        entityManager.flush();
+        entityManager.clear();
+        SoccerPlayer storedPlayer = dataRepository.findReadOnlyByName("Roy");
+        storedPlayer.setHeight(183);
+        entityManager.flush();
+    }
+
+    @Test
+    @DisplayName("Lock 테스트")
+    void lockTest() {
+        dataRepository.findUsingLockByName("Roy");
     }
 
 }

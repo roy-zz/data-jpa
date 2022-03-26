@@ -5,12 +5,11 @@ import com.roy.datajpa.repository.data.query.dto.SoccerPlayerResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
 import org.springframework.data.domain.Slice;
-import org.springframework.data.jpa.repository.EntityGraph;
-import org.springframework.data.jpa.repository.JpaRepository;
-import org.springframework.data.jpa.repository.Modifying;
-import org.springframework.data.jpa.repository.Query;
+import org.springframework.data.jpa.repository.*;
 import org.springframework.data.repository.query.Param;
 
+import javax.persistence.LockModeType;
+import javax.persistence.QueryHint;
 import java.util.List;
 import java.util.Optional;
 import java.util.Set;
@@ -91,5 +90,13 @@ public interface SoccerPlayerDataRepository extends JpaRepository<SoccerPlayer, 
 
     @EntityGraph(attributePaths = {"team"})
     List<SoccerPlayer> findAllByName(String name);
+
+    SoccerPlayer findUpdatableByName(String name);
+
+    @QueryHints(value = @QueryHint(name = "org.hibernate.readOnly", value = "true"))
+    SoccerPlayer findReadOnlyByName(String name);
+
+    @Lock(LockModeType.PESSIMISTIC_WRITE)
+    List<SoccerPlayer> findUsingLockByName(String name);
 
 }
