@@ -190,8 +190,8 @@ class SoccerPlayerPureRepositoryTest {
         pureRepository.flushAndClear();
         
         SoccerPlayer storedPlayer = pureRepository.findByName("Roy");
-        System.out.println("storedPlayer.getCreatedAt() = " + storedPlayer.getCreatedAt());
-        System.out.println("storedPlayer.getUpdatedAt() = " + storedPlayer.getUpdatedAt());
+//        System.out.println("storedPlayer.getCreatedAt() = " + storedPlayer.getCreatedAt());
+//        System.out.println("storedPlayer.getUpdatedAt() = " + storedPlayer.getUpdatedAt());
     }
 
 }

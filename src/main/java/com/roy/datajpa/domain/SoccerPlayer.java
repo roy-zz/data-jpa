@@ -1,6 +1,9 @@
 package com.roy.datajpa.domain;
 
-import lombok.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
+import lombok.ToString;
 
 import javax.persistence.*;
 import java.util.Objects;
@@ -19,10 +22,9 @@ import static lombok.AccessLevel.PROTECTED;
                 query = "SELECT SP FROM SoccerPlayer SP WHERE SP.height > :height")
 })
 @Getter @Setter
-@EqualsAndHashCode(callSuper = true)
 @ToString(of = {"id", "name", "height", "weight"})
 @NoArgsConstructor(access = PROTECTED)
-public class SoccerPlayer extends DataBaseEntity {
+public class SoccerPlayer {
 
     @Id @GeneratedValue
     @Column(name = "soccer_player_id")
