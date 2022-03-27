@@ -9,10 +9,7 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.data.domain.Page;
-import org.springframework.data.domain.PageRequest;
-import org.springframework.data.domain.Slice;
-import org.springframework.data.domain.Sort;
+import org.springframework.data.domain.*;
 import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 
@@ -436,6 +433,34 @@ class SoccerPlayerDataRepositoryTest {
 
         List<SoccerPlayer> storedPlayers = dataRepository.findAll(specification);
         assertEquals(2, storedPlayers.size());
+    }
+
+    @Test
+    @DisplayName("Query By Example 테스트")
+    void queryByExampleTest() {
+        Team team1 = new Team("TeamA");
+        Team team2 = new Team("TeamB");
+        List<SoccerPlayer> players = List.of(
+                new SoccerPlayer("Roy", 173, 73, team1),
+                new SoccerPlayer("Perry", 180, 80, team1),
+                new SoccerPlayer("Sally", 160, 50, team1),
+                new SoccerPlayer("Dice", 183, 90, team2),
+                new SoccerPlayer("Louis", 178, 85, team2)
+        );
+        dataRepository.saveAll(players);
+        entityManager.flush();
+        entityManager.clear();
+
+        SoccerPlayer examplePlayer = new SoccerPlayer("Roy");
+        Team exampleTeam = new Team("TeamA");
+        examplePlayer.setTeam(exampleTeam);
+
+        ExampleMatcher exampleMatcher = ExampleMatcher.matching()
+                .withIgnorePaths("height", "weight");
+
+        Example<SoccerPlayer> example = Example.of(examplePlayer, exampleMatcher);
+        List<SoccerPlayer> storedPlayers = dataRepository.findAll(example);
+        assertEquals(1, storedPlayers.size());
     }
 
 }
