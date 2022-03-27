@@ -17,7 +17,8 @@ import java.util.Set;
 
 public interface SoccerPlayerDataRepository extends
         JpaRepository<SoccerPlayer, Long>,
-        SoccerPlayerDataRepositoryCustom {
+        SoccerPlayerDataRepositoryCustom,
+        JpaSpecificationExecutor<SoccerPlayer> {
 
     List<SoccerPlayer> findByNameAndHeightGreaterThan(String name, int height);
 

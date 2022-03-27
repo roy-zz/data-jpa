@@ -3,6 +3,7 @@ package com.roy.datajpa.repository.data;
 import com.roy.datajpa.domain.SoccerPlayer;
 import com.roy.datajpa.domain.Team;
 import com.roy.datajpa.repository.data.query.dto.SoccerPlayerResponseDTO;
+import com.roy.datajpa.repository.data.specification.SoccerPlayerSpecification;
 import org.hibernate.Hibernate;
 import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
@@ -12,6 +13,7 @@ import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Slice;
 import org.springframework.data.domain.Sort;
+import org.springframework.data.jpa.domain.Specification;
 import org.springframework.transaction.annotation.Transactional;
 
 import javax.persistence.EntityManager;
@@ -409,6 +411,31 @@ class SoccerPlayerDataRepositoryTest {
 
         SoccerPlayer updatedPlayer = dataRepository.findOneByName("Roy");
         assertNotNull(updatedPlayer.getUpdatedAt());
+    }
+
+    @Test
+    @DisplayName("Specification 테스트")
+    void specificationTest() {
+        Team team1 = new Team("TeamA");
+        Team team2 = new Team("TeamB");
+        List<SoccerPlayer> players = List.of(
+                new SoccerPlayer("Roy", 173, 73, team1),
+                new SoccerPlayer("Perry", 180, 80, team1),
+                new SoccerPlayer("Sally", 160, 50, team1),
+                new SoccerPlayer("Dice", 183, 90, team2),
+                new SoccerPlayer("Louis", 178, 85, team2)
+        );
+        dataRepository.saveAll(players);
+        entityManager.flush();
+        entityManager.clear();
+
+        Specification<SoccerPlayer> specification =
+                SoccerPlayerSpecification.teamName("TeamA")
+                        .and(SoccerPlayerSpecification.greaterHeight(170))
+                        .and(SoccerPlayerSpecification.greaterWeight(70));
+
+        List<SoccerPlayer> storedPlayers = dataRepository.findAll(specification);
+        assertEquals(2, storedPlayers.size());
     }
 
 }
