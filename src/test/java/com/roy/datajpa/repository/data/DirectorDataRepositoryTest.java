@@ -17,7 +17,7 @@ class DirectorDataRepositoryTest {
     @Rollback(value = false)
     @DisplayName("감독 저장 테스트")
     void saveDirectorTest() {
-        Director director = new Director();
+        Director director = new Director("AID", "Roy");
         dataRepository.save(director);
     }
 
