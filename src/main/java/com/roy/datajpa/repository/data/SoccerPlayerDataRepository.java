@@ -2,9 +2,7 @@ package com.roy.datajpa.repository.data;
 
 import com.roy.datajpa.domain.SoccerPlayer;
 import com.roy.datajpa.repository.data.custom.SoccerPlayerDataRepositoryCustom;
-import com.roy.datajpa.repository.data.projection.BodySpecOpenProjection;
-import com.roy.datajpa.repository.data.projection.ExcludeIdClosedProjection;
-import com.roy.datajpa.repository.data.projection.ExcludeIdProjectionDTO;
+import com.roy.datajpa.repository.data.projection.*;
 import com.roy.datajpa.repository.data.query.dto.SoccerPlayerResponseDTO;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.Pageable;
@@ -113,5 +111,27 @@ public interface SoccerPlayerDataRepository extends
     List<ExcludeIdProjectionDTO> findUsingDtoProjectionByName(String name);
 
     <T> List<T> findUsingDynamicProjectionByName(String name, Class<T> type);
+
+    @Query(value =
+            "SELECT " +
+            "   SP.soccer_player_id as id, " +
+            "   SP.name as name, " +
+            "   SP.height as height, " +
+            "   SP.weight as weight " +
+            "FROM " +
+            "   soccer_player SP "
+            , nativeQuery = true)
+    Page<NativeProjectionDTO> findUsingNativeProjectionDTO(Pageable pageable);
+
+    @Query(value =
+            "SELECT " +
+            "   SP.soccer_player_id as id, " +
+            "   SP.name as name, " +
+            "   SP.height as height, " +
+            "   SP.weight as weight " +
+            "FROM " +
+            "   soccer_player SP "
+            , nativeQuery = true)
+    Page<NativeProjectionInterface> findUsingNativeProjectionInterface(Pageable pageable);
 
 }

@@ -2,10 +2,7 @@ package com.roy.datajpa.repository.data;
 
 import com.roy.datajpa.domain.SoccerPlayer;
 import com.roy.datajpa.domain.Team;
-import com.roy.datajpa.repository.data.projection.BodySpecOpenProjection;
-import com.roy.datajpa.repository.data.projection.ExcludeIdClosedProjection;
-import com.roy.datajpa.repository.data.projection.ExcludeIdProjectionDTO;
-import com.roy.datajpa.repository.data.projection.NestedClosedProjection;
+import com.roy.datajpa.repository.data.projection.*;
 import com.roy.datajpa.repository.data.query.dto.SoccerPlayerResponseDTO;
 import com.roy.datajpa.repository.data.specification.SoccerPlayerSpecification;
 import org.hibernate.Hibernate;
@@ -593,6 +590,66 @@ class SoccerPlayerDataRepositoryTest {
         List<NestedClosedProjection> openProjection
                 = dataRepository.findUsingDynamicProjectionByName("Roy", NestedClosedProjection.class);
         assertEquals(2, openProjection.size());
+    }
+
+    @Test
+    @DisplayName("네이티브 쿼리 프로젝션 인터페이스 조회 테스트")
+    void nativeQueryProjectionInterfaceTest() {
+        List<SoccerPlayer> players = List.of(
+                new SoccerPlayer("Roy", 173, 73),
+                new SoccerPlayer("Roy", 183, 83),
+                new SoccerPlayer("Perry", 180, 80),
+                new SoccerPlayer("Dice", 183, 90),
+                new SoccerPlayer("Louis", 178, 85)
+        );
+        dataRepository.saveAll(players);
+        entityManager.flush();
+        entityManager.clear();
+
+        Sort sort = Sort.by(Sort.Direction.ASC, "soccer_player_id");
+        PageRequest pageRequest = PageRequest.of(0, 10, sort);
+        Page<NativeProjectionInterface> storedPlayers
+                = dataRepository.findUsingNativeProjectionInterface(pageRequest);
+
+        List<NativeProjectionInterface> listOfPlayers = storedPlayers.getContent();
+        assertEquals(5, listOfPlayers.size());
+        
+        listOfPlayers.forEach(player -> {
+            System.out.println("player.getId() = " + player.getId());
+            System.out.println("player.getName() = " + player.getName());
+            System.out.println("player.getHeight() = " + player.getHeight());
+            System.out.println("player.getWeight() = " + player.getWeight());
+        });
+    }
+
+    @Test
+    @DisplayName("네이티브 쿼리 프로젝션 DTO 조회 테스트")
+    void nativeQueryProjectionDTOTest() {
+        List<SoccerPlayer> players = List.of(
+                new SoccerPlayer("Roy", 173, 73),
+                new SoccerPlayer("Roy", 183, 83),
+                new SoccerPlayer("Perry", 180, 80),
+                new SoccerPlayer("Dice", 183, 90),
+                new SoccerPlayer("Louis", 178, 85)
+        );
+        dataRepository.saveAll(players);
+        entityManager.flush();
+        entityManager.clear();
+
+        Sort sort = Sort.by(Sort.Direction.ASC, "soccer_player_id");
+        PageRequest pageRequest = PageRequest.of(0, 10, sort);
+        Page<NativeProjectionDTO> storedPlayers
+                = dataRepository.findUsingNativeProjectionDTO(pageRequest);
+
+        List<NativeProjectionDTO> listOfPlayers = storedPlayers.getContent();
+        assertEquals(5, listOfPlayers.size());
+
+        listOfPlayers.forEach(player -> {
+            System.out.println("player.getId() = " + player.getId());
+            System.out.println("player.getName() = " + player.getName());
+            System.out.println("player.getHeight() = " + player.getHeight());
+            System.out.println("player.getWeight() = " + player.getWeight());
+        });
     }
 
 }
